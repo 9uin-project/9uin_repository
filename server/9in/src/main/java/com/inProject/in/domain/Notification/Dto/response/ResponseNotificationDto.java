@@ -14,14 +14,22 @@ import java.time.LocalDateTime;
 @Builder
 public class ResponseNotificationDto {
     private Long id;
-    private Long receiver_id;
+    private String receiverName;
+    private String senderName;
+    private Long board_id;
+    private String boardName;
+    private String board_type;
     private String message;
     private String alarm_type;
     private LocalDateTime createAt;
 
     public ResponseNotificationDto(Notification notification){
         this.id = notification.getId();
-        this.receiver_id = notification.getReceiver().getId();
+        this.receiverName = notification.getReceiver().getUsername();
+        this.senderName = notification.getSender().getUsername();
+        this.board_id = notification.getBoard().getId();
+        this.boardName = notification.getBoard().getTitle();
+        this.board_type = notification.getBoard().getType();
         this.message = notification.getMessage();
         this.alarm_type = notification.getAlarm_type();
         this.createAt = notification.getCreateAt();

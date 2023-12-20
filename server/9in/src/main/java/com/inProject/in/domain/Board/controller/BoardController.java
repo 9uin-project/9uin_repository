@@ -139,18 +139,4 @@ public class BoardController {
             throw e;
         }
     }
-
-    @GetMapping("ci/test2233")
-    public ResponseEntity<String> cicdTest(){
-        return ResponseEntity.status(HttpStatus.OK).body("cicd22 적용되었나요??");
-    }
-
-    @PostMapping("test")
-    public String dddd(@PathVariable(name = "board_id") Long board_id, HttpServletRequest request){
-        return "test";
-    }
-
-
-
-
 }

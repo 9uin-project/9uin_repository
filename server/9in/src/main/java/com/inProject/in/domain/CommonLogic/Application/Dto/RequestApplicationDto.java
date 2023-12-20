@@ -9,7 +9,6 @@ import lombok.*;
 @ToString
 public class RequestApplicationDto {
     private Long board_id;
-    private Long user_id;
     private Long role_id;
     private String authorName;
 }

@@ -65,20 +65,8 @@ public class SseServiceImpl implements SseService {
                         .name("notice")  //프론트에서 eventsource.addEventListener("sse" ...) 이 부분
                         .data(data));
 
-                User user = userRepository.getByUsername(username)
-                        .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.USER, HttpStatus.NOT_FOUND, username + " 을 sseService에서 찾지 못했습니다."));
-
-                Notification notification = Notification.builder()
-                        .message(data)
-                        .receiver(user)
-                        .isChecked(false)
-                        .alarm_type("message")
-                        .build();
-
-                Notification savedNotification = notificationRepository.save(notification);
-
                 log.info("data 전송 완료 : message ==> " + data);
-                log.info("알림 저장 ==> 수신자 : " + savedNotification.getReceiver() + " 내용 : " + savedNotification.getMessage());
+//                log.info("알림 저장 ==> 수신자 : " + savedNotification.getReceiver() + " 내용 : " + savedNotification.getMessage());
             } catch (IOException exception) {
                 sseRepository.deleteById(username);
                 emitter.completeWithError(exception);
@@ -103,16 +91,22 @@ public class SseServiceImpl implements SseService {
         }
 
         String username =  user.getUsername();
-
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
 
         //더미 데이터 send
-//        RequestApplicationDto dummy = new RequestApplicationDto(Long.valueOf(0),Long.valueOf(0),Long.valueOf(0),"dummy data");
         String dummy = "connect request";
-        
-        sendToClient(username,dummy);
-
         sseRepository.save(username, emitter);
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(username)
+                    .name("notice")
+                    .data(dummy));
+
+            log.info("data 전송 완료 : message ==> " + dummy);
+        } catch (IOException exception) {
+            sseRepository.deleteById(username);
+            emitter.completeWithError(exception);
+        }
 
 //        // Emitter가 완료될 때(모든 데이터가 성공적으로 전송된 상태) Emitter를 삭제한다.한번 보내고 말것이 아니라 주석처리 하였음.
         emitter.onCompletion(() -> sseRepository.deleteById(username));

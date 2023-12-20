@@ -20,7 +20,7 @@ public class CustomNotificationRepositoryImpl implements CustomNotificationRepos
 
         List<Notification> query = jpaQueryFactory
                 .selectFrom(qNotification)
-                .where(qNotification.receiver.id.eq(user_id), qNotification.isChecked.eq(false))
+                .where(qNotification.receiver.id.eq(user_id), qNotification.isChecked.eq(true))
                 .orderBy(qNotification.id.desc())
                 .fetch();
 
