@@ -134,15 +134,16 @@ class CustomBoardRepositoryImplTest {
 
         //when
         long startmill = System.currentTimeMillis();
-        Pageable pageable = PageRequest.of(0, 8);
-        Page<Board> PostPage = boardRepository.findBoards(pageable, user_id, title, type, tags);
-        List<Board> boardList = PostPage.getContent();
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags);
+        List<Board> boardList = postPage.getContent();
         long endmill = System.currentTimeMillis();
         long querytime = endmill - startmill;
 
         //then
-        assertEquals(PostPage.getSize(), 8);
-        assertEquals(boardList.size(), 8);
+        assertEquals(postPage.getSize(), 5);
+        assertEquals(boardList.size(), 5);
+        assertEquals(postPage.getTotalPages(), 10);
 
         for(Board board : boardList){
             System.out.println("--------------------------");
@@ -151,6 +152,71 @@ class CustomBoardRepositoryImplTest {
             System.out.println("--------------------------");
         }
         System.out.println("querytime = " + querytime);
+    }
+
+    @Test
+    @DisplayName("마지막 페이지 출력")
+    void getBoardLastPage() {
+
+        //given
+        String title = "";
+        String type = "";
+        String user_id = "";
+        List<String> tags = new ArrayList<>();
+
+        //when
+        long startmill = System.currentTimeMillis();
+        Pageable pageable = PageRequest.of(4, 5);
+        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags);
+        List<Board> boardList = postPage.getContent();
+        long endmill = System.currentTimeMillis();
+        long querytime = endmill - startmill;
+
+        //then
+        assertEquals(postPage.getSize(), 5);
+        assertEquals(boardList.size(), 5);
+        assertEquals(postPage.getTotalPages(), 10);
+
+        for(Board board : boardList){
+            System.out.println("--------------------------");
+            System.out.println("Board content :" + board.getTitle() + ' ' +  board.getCreateAt());
+            System.out.println("User id : " + board.getAuthor().getUsername());
+            System.out.println("--------------------------");
+        }
+        System.out.println("querytime = " + querytime);
+    }
+
+    @Test
+    @DisplayName("중간 페이지 출력")
+    void getBoardMiddlePage() {
+
+        //given
+        String title = "";
+        String type = "";
+        String user_id = "";
+        List<String> tags = new ArrayList<>();
+
+        //when
+        long startmill = System.currentTimeMillis();
+        Pageable pageable = PageRequest.of(2, 5);
+        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags);
+        List<Board> boardList = postPage.getContent();
+        long endmill = System.currentTimeMillis();
+        long querytime = endmill - startmill;
+
+        //then
+        assertEquals(postPage.getSize(), 5);
+        assertEquals(boardList.size(), 5);
+        assertEquals(postPage.getTotalPages(), 10);
+
+        for(Board board : boardList){
+            System.out.println("--------------------------");
+            System.out.println("Board content :" + board.getTitle() + ' ' +  board.getCreateAt());
+            System.out.println("User id : " + board.getAuthor().getUsername());
+            System.out.println("--------------------------");
+        }
+        System.out.println("total page : " + postPage.getTotalPages());
+        System.out.println("querytime : " + querytime);
     }
 
     @Test
@@ -246,7 +312,7 @@ class CustomBoardRepositoryImplTest {
                     .username("user" + i)
                     .build();
 
-            Page<Board> postPage = boardRepository.searchBoardsByCliped(pageable, user);
+            Page<Board> postPage = boardRepository.searchBoardsByCliped(pageable, user, title, type, tags);
             List<Board> boardList = postPage.getContent();
 
             //then
@@ -262,6 +328,8 @@ class CustomBoardRepositoryImplTest {
         }
 
     }
+
+
 
 }
 

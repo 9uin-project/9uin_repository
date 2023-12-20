@@ -7,6 +7,7 @@ import com.inProject.in.domain.Comment.entity.Comment;
 import com.inProject.in.domain.MToNRelation.ApplicantBoardRelation.entity.ApplicantBoardRelation;
 import com.inProject.in.domain.MToNRelation.ApplicantRoleRelation.entity.ApplicantRoleRelation;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.entity.ClipBoardRelation;
+import com.inProject.in.domain.Notification.entity.Notification;
 import com.inProject.in.domain.Profile.entity.*;
 import com.inProject.in.domain.User.Dto.UpdateUserDto;
 import jakarta.persistence.*;
@@ -58,7 +59,7 @@ public class User extends BaseEntity implements UserDetails{
 
     @OneToMany(mappedBy = "board_applicant", cascade = CascadeType.REMOVE)
     @ToString.Exclude
-    private List<ApplicantBoardRelation> applicantBoardRelationList; //지원한 게시글들
+    private List<ApplicantBoardRelation> applicantBoardRelationList;  //지원한 게시글들
 
     @OneToMany(mappedBy = "role_applicant", cascade = CascadeType.REMOVE)
     @ToString.Exclude
@@ -70,23 +71,35 @@ public class User extends BaseEntity implements UserDetails{
 
     @OneToMany(mappedBy = "user",  cascade = CascadeType.REMOVE)
     @ToString.Exclude
-    private List<Comment> commentList;
+    @Builder.Default
+    private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Job_ex> jobExList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Education> educationList;
+    @ToString.Exclude
+    @Builder.Default
+    private List<Education> educationList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",  cascade = CascadeType.REMOVE)
-    private List<Project_skill> projectSkillList;
+    @ToString.Exclude
+    @Builder.Default
+    private List<Project_skill> projectSkillList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Certificate> certificateList;
+    @ToString.Exclude
+    @Builder.Default
+    private List<Certificate> certificateList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "user",  cascade = CascadeType.REMOVE)
+    @ToString.Exclude
     private MyInfo myInfo;
 
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.REMOVE)
+    @ToString.Exclude
+    @Builder.Default
+    private List<Notification> notification = new ArrayList<>();
 
 
     //권한 인증

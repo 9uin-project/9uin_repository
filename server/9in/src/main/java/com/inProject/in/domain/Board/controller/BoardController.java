@@ -54,7 +54,6 @@ public class BoardController {
             }),
             @ApiResponse(responseCode = "400", description = "게시글 조회 실패")
     })
-
     public ResponseEntity<ResponseBoardDto> getBoard(@PathVariable(name = "board_id") Long board_id, HttpServletRequest request) throws CustomException {
         try{
             ResponseBoardDto responseBoardDto = boardService.getBoard(board_id, request);
@@ -140,18 +139,4 @@ public class BoardController {
             throw e;
         }
     }
-
-    @GetMapping("ci/test2233")
-    public ResponseEntity<String> cicdTest(){
-        return ResponseEntity.status(HttpStatus.OK).body("cicd22 적용되었나요??");
-    }
-
-    @PostMapping("test")
-    public String dddd(@PathVariable(name = "board_id") Long board_id, HttpServletRequest request){
-        return "test";
-    }
-
-
-
-
 }

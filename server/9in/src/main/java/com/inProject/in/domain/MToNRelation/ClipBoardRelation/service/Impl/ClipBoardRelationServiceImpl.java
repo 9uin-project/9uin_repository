@@ -4,6 +4,7 @@ import com.inProject.in.Global.exception.ConstantsClass;
 import com.inProject.in.Global.exception.CustomException;
 import com.inProject.in.config.security.JwtTokenProvider;
 import com.inProject.in.domain.Board.Dto.response.ResponseBoardListDto;
+import com.inProject.in.domain.MToNRelation.ClipBoardRelation.Dto.RequestSearchClipDto;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.Dto.ResponseClipBoardRelationDto;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.entity.ClipBoardRelation;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.repository.ClipBoardRelationRepository;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,12 +52,16 @@ public class ClipBoardRelationServiceImpl implements ClipBoardRelationService {
     }
 
     @Override
-    public List<ResponseBoardListDto> getClipedBoards(Pageable pageable, HttpServletRequest request) {
+    @Transactional
+    public List<ResponseBoardListDto> getClipedBoards(Pageable pageable, RequestSearchClipDto requestSearchClipDto,  HttpServletRequest request) {
         List<ResponseBoardListDto> responseBoardDtoList = new ArrayList<>();
         User user = getUserFromRequest(request);
-        Page<Board> boardPage = boardRepository.searchBoardsByCliped(pageable, user);
+        String title = requestSearchClipDto.getTitle();
+        String type = requestSearchClipDto.getType();
+        List<String> tags = requestSearchClipDto.getTags();
+
+        Page<Board> boardPage = boardRepository.searchBoardsByCliped(pageable, user, title, type, tags);
         List<Board> boardList = boardPage.getContent();
-        List<ResponseBoardListDto> responseBoardListDtoList = new ArrayList<>();
 
         for (Board board : boardList) {
             ResponseBoardListDto responseBoardListDto = new ResponseBoardListDto(board);
@@ -77,6 +83,7 @@ public class ClipBoardRelationServiceImpl implements ClipBoardRelationService {
     }
 
     @Override
+    @Transactional
     public ResponseClipBoardRelationDto insertClip(Long user_id, Long board_id){
 
 
@@ -108,6 +115,7 @@ public class ClipBoardRelationServiceImpl implements ClipBoardRelationService {
     }
 
     @Override
+    @Transactional
     public ResponseClipBoardRelationDto deleteClip(Long user_id, Long board_id) {
 
         User user = userRepository.findById(user_id)

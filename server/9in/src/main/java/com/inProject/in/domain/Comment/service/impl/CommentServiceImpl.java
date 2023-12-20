@@ -48,6 +48,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public ResponseCommentDto getComment(Long id) {
         Comment comment = commentRepository.findById(id).
                 orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.COMMENT, HttpStatus.NOT_FOUND, id + "는 getComment에서 유효하지 않은 id값 입니다."));
@@ -61,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-//    @PreAuthorize("hasRole('USER')")
+    @Transactional
     public ResponseCommentDto createComment(RequestCommentDto requestCommentDto, HttpServletRequest request) {
 
         Long board_id = requestCommentDto.getBoard_id();
@@ -91,7 +92,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    //@PreAuthorize(("#comment.user.username == authentication.principal.username"))
+    @Transactional
     public ResponseCommentDto updateComment(Long id, UpdateCommentDto updateCommentDto, HttpServletRequest request) {
         User user = getUserFromRequest(request);
 
@@ -112,6 +113,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public List<ResponseCommentDto> getCommentsInBoard(Pageable pageable, Long board_id) {
 
         Page<Comment> commentPage =  commentRepository.findCommentsByBoardId(pageable, board_id);

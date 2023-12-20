@@ -3,6 +3,7 @@ package com.inProject.in.domain.MToNRelation.ClipBoardRelation.controller;
 import com.inProject.in.Global.exception.CustomException;
 import com.inProject.in.domain.Board.Dto.response.ResponseBoardListDto;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.Dto.RequestClipDto;
+import com.inProject.in.domain.MToNRelation.ClipBoardRelation.Dto.RequestSearchClipDto;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.Dto.ResponseClipBoardRelationDto;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.service.ClipBoardRelationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,9 +44,10 @@ public class ClipController {
                     })
             })
     public ResponseEntity<List<ResponseBoardListDto>> getClipedBoards(@PageableDefault(size = 8) Pageable pageable,
+                                                                      RequestSearchClipDto requestSearchClipDto,
                                                                       HttpServletRequest request){
         try{
-            List<ResponseBoardListDto> boardListDtoList = clipBoardRelationService.getClipedBoards(pageable, request);
+            List<ResponseBoardListDto> boardListDtoList = clipBoardRelationService.getClipedBoards(pageable, requestSearchClipDto, request);
 
             return ResponseEntity.status(HttpStatus.OK).body(boardListDtoList);
         }catch (CustomException e){

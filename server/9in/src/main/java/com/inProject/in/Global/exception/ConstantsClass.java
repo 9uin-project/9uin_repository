@@ -13,7 +13,8 @@ public class ConstantsClass{
         CLIP("Clip"),
         SSE("Sse"),
         ROLE("Role"),
-        SKILLTAG("SkillTag");
+        SKILLTAG("SkillTag"),
+        NOTIFICATION("Notification");
 
         private String exceptionClass;
 

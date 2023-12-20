@@ -2,6 +2,7 @@ package com.inProject.in.domain.CommonLogic.Application.service.Impl;
 
 import com.inProject.in.Global.exception.ConstantsClass;
 import com.inProject.in.Global.exception.CustomException;
+import com.inProject.in.config.security.JwtTokenProvider;
 import com.inProject.in.domain.Board.entity.Board;
 import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
 import com.inProject.in.domain.CommonLogic.Application.Dto.ResponseApplicationDto;
@@ -14,10 +15,13 @@ import com.inProject.in.domain.MToNRelation.ApplicantRoleRelation.repository.App
 import com.inProject.in.domain.MToNRelation.RoleBoardRelation.entity.RoleBoardRelation;
 import com.inProject.in.domain.MToNRelation.RoleBoardRelation.repository.RoleBoardRelationRepository;
 import com.inProject.in.domain.Board.repository.BoardRepository;
+import com.inProject.in.domain.Notification.entity.Notification;
+import com.inProject.in.domain.Notification.repository.NotificationRepository;
 import com.inProject.in.domain.RoleNeeded.entity.RoleNeeded;
 import com.inProject.in.domain.RoleNeeded.repository.RoleNeededRepository;
 import com.inProject.in.domain.User.entity.User;
 import com.inProject.in.domain.User.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,6 +36,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicantBoardRelationRepository applicantBoardRelationRepository;
     private final ApplicantRoleRelationRepository applicantRoleRelationRepository;
     private final RoleBoardRelationRepository roleBoardRelationRepository;
+    private final NotificationRepository notificationRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final Logger log = LoggerFactory.getLogger(ApplicationServiceImpl.class);
     public ApplicationServiceImpl(UserRepository userRepository,
@@ -39,7 +45,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                                   RoleNeededRepository roleNeededRepository,
                                   ApplicantBoardRelationRepository applicantBoardRelationRepository,
                                   ApplicantRoleRelationRepository applicantRoleRelationRepository,
-                                  RoleBoardRelationRepository roleBoardRelationRepository){
+                                  RoleBoardRelationRepository roleBoardRelationRepository,
+                                  NotificationRepository notificationRepository,
+                                  JwtTokenProvider jwtTokenProvider){
 
         this.userRepository = userRepository;
         this.boardRepository = boardRepository;
@@ -47,19 +55,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         this.applicantBoardRelationRepository = applicantBoardRelationRepository;
         this.applicantRoleRelationRepository = applicantRoleRelationRepository;
         this.roleBoardRelationRepository = roleBoardRelationRepository;
+        this.notificationRepository = notificationRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
 
     @Override
     @Transactional
-    public ResponseApplicationDto createApplication(RequestApplicationDto requestApplicationDto) throws CustomException{  //사용자가 지원 버튼 눌렀을 때 로직
+    public ResponseApplicationDto createApplication(RequestApplicationDto requestApplicationDto, HttpServletRequest request) throws CustomException{  //사용자가 지원 버튼 눌렀을 때 로직
 
-        Long user_id = requestApplicationDto.getUser_id();
+        User user = getUserFromRequest(request);
         Long board_id = requestApplicationDto.getBoard_id();
         Long role_id = requestApplicationDto.getRole_id();
-
-        User user = userRepository.findById(requestApplicationDto.getUser_id())
-                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, user_id + "는 applyToBoard 에서 유효하지 않은 user id"));
 
         Board board = boardRepository.findById(board_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "는 applyToBoard 에서 유효하지 않은 board id"));
@@ -67,7 +74,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         RoleNeeded roleNeeded = roleNeededRepository.findById(role_id)
                 .orElseThrow(() -> new  CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, role_id + "는 applyToBoard 에서 유효하지 않은 role id"));
 
-        if(board.getAuthor().getId() == user_id){
+        if(board.getAuthor().getId() == user.getId()){
             throw new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.CONFLICT, "작성자는 지원 불가");
         }
 
@@ -94,15 +101,11 @@ public class ApplicationServiceImpl implements ApplicationService {
             RoleBoardRelation roleBoardRelation = roleBoardRelationRepository.findRelationById(board_id, role_id)
                     .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, role_id + "는 이 게시글에 등록되지 않음"));
 
-//            if(pre_cnt < want_cnt){
-//                roleBoardRelation.setPre_cnt(pre_cnt + 1);
-//                RoleBoardRelation updateRoleBoard = roleBoardRelationRepository.save(roleBoardRelation);
-//                log.info("Update in insert role - post relation ==> role - post relation_id : " + updateRoleBoard.getId() +
-//                        " relation pre_cnt : " + updateRoleBoard.getPre_cnt() + " relation want_cnt : " + updateRoleBoard.getWant_cnt());
-//            }
-//            else{
-//                throw new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.CONFLICT, "최대 지원 수를 초과했습니다.");
-//            }
+            int want_cnt = roleBoardRelation.getWant_cnt();
+            int pre_cnt = roleBoardRelation.getPre_cnt();
+
+            if(want_cnt <= pre_cnt)
+                throw new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.CONFLICT, "최대 지원 수를 초과했습니다.");
 
             ApplicantBoardRelation createApplicantBoardRelation = applicantBoardRelationRepository.save(applicantBoardRelation);
             ApplicantRoleRelation createApplicantRoleRelation = applicantRoleRelationRepository.save(applicantRoleRelation);
@@ -113,7 +116,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                     " user - role relation_id : " + createApplicantRoleRelation.getId());
 
             ResponseApplicationDto responseApplicationDto = new ResponseApplicationDto("create", "success", true);
-
             return responseApplicationDto;
         }
         else{
@@ -124,15 +126,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public ResponseApplicationDto deleteApplication(RequestApplicationDto requestApplicationDto) {
+    public ResponseApplicationDto deleteApplication(RequestApplicationDto requestApplicationDto, HttpServletRequest request) {
+
+        User user = getUserFromRequest(request);
+
         Long board_id = requestApplicationDto.getBoard_id();
         Long role_id = requestApplicationDto.getRole_id();
-        Long user_id = requestApplicationDto.getUser_id();
-        int pre_cnt;
-        int want_cnt;
 
-        User user = userRepository.findById(requestApplicationDto.getUser_id())
-                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, user_id + "는 applyToBoard 에서 유효하지 않은 user id"));
+        int pre_cnt;
 
         Board board = boardRepository.findById(board_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "는 applyToBoard 에서 유효하지 않은 board id"));
@@ -148,19 +149,18 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicantBoardRelationRepository.deleteById(applicantBoardRelation.getId());
             applicantRoleRelationRepository.deleteById(applicantRoleRelation.getId());
 
-            log.info("Delete user - board relation ==> user id : " + user_id + " board id : " + board_id + " relation id " + applicantBoardRelation.getId());
+            log.info("Delete user - board relation ==> user id : " + user.getId() + " board id : " + board_id + " relation id " + applicantBoardRelation.getId());
             log.info("Delete user - role relation ==> role id : " + role_id + " relation id " + applicantRoleRelation.getId());
 
             RoleBoardRelation roleBoardRelation = roleBoardRelationRepository.findRelationById(board_id, role_id).get();
 
             pre_cnt = roleBoardRelation.getPre_cnt();
-            want_cnt = roleBoardRelation.getWant_cnt();
 
             if (pre_cnt > 0) {
-                roleBoardRelation.setPre_cnt(pre_cnt - 1);
-                RoleBoardRelation updateRoleBoard = roleBoardRelationRepository.save(roleBoardRelation);
-                log.info("Update in delete role - post relation ==> role - post relation_id : " + updateRoleBoard.getId() +
-                        " relation pre_cnt : " + updateRoleBoard.getPre_cnt() + " relation want_cnt : " + updateRoleBoard.getWant_cnt());
+//                roleBoardRelation.setPre_cnt(pre_cnt - 1);
+//                RoleBoardRelation updateRoleBoard = roleBoardRelationRepository.save(roleBoardRelation);
+//                log.info("Update in delete role - post relation ==> role - post relation_id : " + updateRoleBoard.getId() +
+//                        " relation pre_cnt : " + updateRoleBoard.getPre_cnt() + " relation want_cnt : " + updateRoleBoard.getWant_cnt());
 
                 ResponseApplicationDto responseApplicationDto = new ResponseApplicationDto("delete", "success", true);
 
@@ -175,15 +175,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
 
-    public ApplicantBoardRelation rejectApplication(RequestApplicationDto requestApplicationDto){
-
-        //return sseemiiter으로 바꿀 예정
+    @Override
+    @Transactional
+    public ApplicantBoardRelation rejectApplication(RequestApplicationDto requestApplicationDto, HttpServletRequest request){
+        User user = getUserFromRequest(request);
         Long board_id = requestApplicationDto.getBoard_id();
         Long role_id = requestApplicationDto.getRole_id();
-        Long user_id = requestApplicationDto.getUser_id();
+//        Long user_id = requestApplicationDto.getUser_id();
 
-        User user = userRepository.findById(requestApplicationDto.getUser_id())
-                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, user_id + "는 applyToBoard 에서 유효하지 않은 user id"));
+//        User user = userRepository.findById(requestApplicationDto.getUser_id())
+//                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, user_id + "는 applyToBoard 에서 유효하지 않은 user id"));
 
         Board board = boardRepository.findById(board_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "는 applyToBoard 에서 유효하지 않은 board id"));
@@ -193,14 +194,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         //delete()
         return applicantBoardRelation;
     }
-    public ApplicantBoardRelation acceptApplication(RequestApplicationDto requestApplicationDto){
+    @Override
+    @Transactional
+    public ApplicantBoardRelation acceptApplication(RequestApplicationDto requestApplicationDto, HttpServletRequest request){
+        User user = getUserFromRequest(request);
 
         Long board_id = requestApplicationDto.getBoard_id();
         Long role_id = requestApplicationDto.getRole_id();
-        Long user_id = requestApplicationDto.getUser_id();
+//        Long user_id = requestApplicationDto.getUser_id();
 
-        User user = userRepository.findById(requestApplicationDto.getUser_id())
-                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, user_id + "는 applyToBoard 에서 유효하지 않은 user id"));
+//        User user = userRepository.findById(requestApplicationDto.getUser_id())
+//                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, user_id + "는 applyToBoard 에서 유효하지 않은 user id"));
 
         Board board = boardRepository.findById(board_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "는 applyToBoard 에서 유효하지 않은 board id"));
@@ -223,16 +227,32 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicantBoardRelation.setStatus(0);
         return applicantBoardRelation;
     }
+    @Override
+    @Transactional
     public ResponseSseDto ApplicationToSseResponse(RequestApplicationDto requestApplicationDto){
         String board_title = boardRepository.getById(requestApplicationDto.getBoard_id()).getTitle();
         String role_name = roleNeededRepository.findById(requestApplicationDto.getRole_id()).get().getName();
-        String user_name = userRepository.getById(requestApplicationDto.getUser_id()).getUsername();
+//        String user_name = userRepository.getById(requestApplicationDto.getUser_id()).getUsername();
         ResponseSseDto responseSseDto =  ResponseSseDto.builder().
                 title(board_title).
                 role(role_name).
-                user_name(user_name).
                 build();
         return responseSseDto;
+    }
+
+    private User getUserFromRequest(HttpServletRequest request){
+        String token = jwtTokenProvider.resolveToken(request);
+        User user;
+
+        if(token != null && jwtTokenProvider.validateToken(token)){
+            String username = jwtTokenProvider.getUsername(token);
+
+            return user = userRepository.getByUsername(username)
+                    .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, "applicationService ==> request로부터 user를 찾지 못함"));
+        }
+        else{
+            throw new CustomException(ConstantsClass.ExceptionClass.USER, HttpStatus.UNAUTHORIZED, "token이 없거나, 권한이 유효하지 않습니다.");
+        }
     }
 
 }

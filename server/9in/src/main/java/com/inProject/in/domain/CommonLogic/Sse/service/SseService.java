@@ -10,6 +10,5 @@ public interface SseService {
     SseEmitter subscribe(String user_id, String data);
     void sendToClient(String username, String data);
     SseEmitter createEmitter(HttpServletRequest request);
-
     void closeEmitter(String username);
 }

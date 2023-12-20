@@ -57,27 +57,6 @@ public class BoardServiceImpl implements BoardService {
     private final ViewCountRepository viewCountRepository;
     private final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
 
-//    @Autowired
-//    public BoardServiceImpl(
-//            BoardRepository boardRepository,
-//            SkillTagRepository skilltagRepository,
-//            RoleNeededRepository roleNeededRepository,
-//            TagBoardRelationRepository tagBoardRelationRepository,
-//            RoleBoardRelationRepository roleBoardRelationRepository,
-//            UserRepository userRepository,
-//            JwtTokenProvider jwtTokenProvider,
-//            ViewCountRepository viewCountRepository
-//    ){
-//        this.boardRepository = boardRepository;
-//        this.skilltagRepository = skilltagRepository;
-//        this.roleNeededRepository = roleNeededRepository;
-//        this.tagBoardRelationRepository = tagBoardRelationRepository;
-//        this.roleBoardRelationRepository = roleBoardRelationRepository;
-//        this.userRepository = userRepository;
-//        this.jwtTokenProvider = jwtTokenProvider;
-//        this.viewCountRepository = viewCountRepository;
-//    }
-
     public List<TagBoardRelation> InsertTagBoardRelation(Board board, List<RequestSkillTagDto> requestSkillTagDtoList){
 
         List<TagBoardRelation> tagBoardRelationList = new ArrayList<>();

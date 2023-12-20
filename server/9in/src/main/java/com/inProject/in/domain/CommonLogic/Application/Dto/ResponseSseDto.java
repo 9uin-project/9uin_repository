@@ -11,5 +11,5 @@ import lombok.*;
 public class ResponseSseDto {
     String title;
     String role;
-    String user_name;
+//    String user_name;
 }

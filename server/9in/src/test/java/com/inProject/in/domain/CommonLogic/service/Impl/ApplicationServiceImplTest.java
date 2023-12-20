@@ -1,5 +1,6 @@
 package com.inProject.in.domain.CommonLogic.service.Impl;
 
+import com.inProject.in.config.security.JwtTokenProvider;
 import com.inProject.in.domain.Board.entity.Board;
 import com.inProject.in.domain.Board.repository.BoardRepository;
 import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
@@ -26,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +35,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,6 +54,8 @@ class ApplicationServiceImplTest {
     private ApplicantRoleRelationRepository applicantRoleRelationRepository;
     @Mock
     private RoleBoardRelationRepository roleBoardRelationRepository;
+    @Mock
+    private JwtTokenProvider jwtTokenProvider;
 
     @InjectMocks
     ApplicationServiceImpl applicationService;
@@ -146,7 +151,14 @@ class ApplicationServiceImplTest {
                 .authorName("user1")
                 .build();
 
-        given(userRepository.findById(2L)).willReturn(Optional.ofNullable(user2));
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("X-AUTH-TOKEN", "token");
+
+        given(jwtTokenProvider.resolveToken(request)).willReturn("token");   //getUserFromRequest 메서드 시작.
+        given(jwtTokenProvider.validateToken(anyString())).willReturn(true);
+        given(jwtTokenProvider.getUsername(anyString())).willReturn("user2");
+        given(userRepository.getByUsername(anyString())).willReturn(Optional.ofNullable(user2)); //끝
+
         given(boardRepository.findById(1L)).willReturn(Optional.ofNullable(board));
         given(roleNeededRepository.findById(1L)).willReturn(Optional.ofNullable(roleNeeded));
         given(applicantBoardRelationRepository.isExistApplicantBoard(user2, board)).willReturn(false);
@@ -155,7 +167,7 @@ class ApplicationServiceImplTest {
         given(applicantRoleRelationRepository.save(any(ApplicantRoleRelation.class))).willReturn(applicantRoleRelation);
 
         //when
-        ResponseApplicationDto responseApplicationDto =  applicationService.createApplication(requestApplicationDto);
+        ResponseApplicationDto responseApplicationDto =  applicationService.createApplication(requestApplicationDto, request);
 
 
         //then
