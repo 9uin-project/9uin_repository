@@ -92,7 +92,10 @@ export default function RecruitStatusView() {
         <MyRecruit>
           <Title>
             <span>프로젝트</span>
-            <TitleCount>1</TitleCount>
+            <TitleCount>
+              {postList &&
+                postList.filter((post) => post.type === '프로젝트').length}
+            </TitleCount>
           </Title>
           {postList &&
             postList
@@ -127,7 +130,11 @@ export default function RecruitStatusView() {
           <Title>
             {' '}
             <span>스터디</span>
-            <TitleCount>1</TitleCount>
+            <TitleCount>
+              {' '}
+              {postList &&
+                postList.filter((post) => post.type === '스터디').length}
+            </TitleCount>
           </Title>
           {postList &&
             postList
