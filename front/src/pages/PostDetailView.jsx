@@ -63,6 +63,7 @@ export default function PostDetail() {
     createAt,
     view_cnt,
     commentList,
+    text,
   } = boardInfo || {};
   console.warn([0]);
 
@@ -236,7 +237,10 @@ export default function PostDetail() {
 
   return (
     <Container>
-      <h1>{title}</h1>
+      <TitleBox>
+        <h1>{title}</h1>
+        <h2>작성자: {username}</h2>
+      </TitleBox>
       <Content>
         <div className="content_flex">
           <span>게시 날짜</span>
@@ -380,6 +384,7 @@ export default function PostDetail() {
       </Section2>
       <Section3>
         <div className="section3_title">프로젝트 소개</div>
+        <div className="section3_info">{text}</div>
         <ul className="section3_content">
           {commentList &&
             commentList.map((comment) => (
@@ -410,6 +415,12 @@ export default function PostDetail() {
 const Container = styled.div`
   max-width: 1344px;
   margin: 2rem auto;
+`;
+
+const TitleBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   h1 {
     color: #000;
@@ -418,6 +429,14 @@ const Container = styled.div`
     font-weight: 700;
     line-height: normal;
     margin-left: 8rem;
+  }
+  h2 {
+    color: #000;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-right: 8rem;
   }
 `;
 
@@ -700,6 +719,15 @@ const Section3 = styled.div`
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+    border-bottom: 2px solid #d9d9d9;
+    padding-bottom: 10px;
+  }
+
+  .section3_info {
+    height: 10rem;
+    padding: 0;
+    overflow-y: scroll;
+
     border-bottom: 2px solid #d9d9d9;
     padding-bottom: 10px;
   }
