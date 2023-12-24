@@ -71,5 +71,5 @@ jobs:
             sudo docker stop 9uin-front 2>/dev/null || true
             sudo docker rm -f 9uin-front 2>/dev/null || true
             sudo docker pull ${{secrets.DOCKERHUB_ID}}/9uin-front
-            sudo docker run -d --rm --name 9uin-front -p 3000:3000 ${{ secrets.DOCKERHUB_ID }}/9uin-front
+            sudo docker run -d --name 9uin-front -p 3000:3000 ${{ secrets.DOCKERHUB_ID }}/9uin-front
             sudo docker image prune -f
