@@ -10,6 +10,7 @@ const Header = (props) => {
 
   const token = useSelector((state) => state.auth.token);
   console.log(token);
+  const username = useSelector((state) => state.auth.username);
 
   const alarmList = useSelector((state) => state.alarm.alarmList);
 
@@ -47,6 +48,9 @@ const Header = (props) => {
             {token && (
               <button onClick={() => handleNavigation('/mypage')}>
                 <img src="/profile/profile.png" alt="프로필 이미지" />
+                <div>
+                  <p>{username}님</p>
+                </div>
               </button>
             )}
             {token && (
@@ -122,6 +126,7 @@ const LogButtons = styled.div`
   align-items: center;
   display: flex;
   gap: 1rem;
+
   button:first-child {
     background: #1f7ceb;
     width: 151px;
@@ -149,6 +154,26 @@ const LogButtons = styled.div`
     img {
       width: 34px;
       height: 34px;
+    }
+
+    &:hover {
+      div {
+        display: block;
+      }
+    }
+
+    div {
+      background-color: #dae9fc;
+      position: absolute;
+
+      bottom: 0;
+      padding: 0.2rem 0.4rem;
+      border-radius: 2rem;
+      display: none;
+      p {
+        font-size: 1rem;
+        font-weight: 600;
+      }
     }
   }
 
