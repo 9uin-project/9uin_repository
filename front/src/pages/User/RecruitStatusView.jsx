@@ -75,6 +75,20 @@ export default function RecruitStatusView() {
     }
   };
 
+  const handleAccept = async () => {
+    const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+
+    try {
+      // const
+
+      const response = await axiosInstance.post('/application/accept');
+      console.log(response);
+    } catch (error) {
+      console.error('지원 수락실패', error);
+      alert('수락하기를 실패하였습니다.');
+    }
+  };
+
   return (
     <Container>
       {showDeleteModal && (
@@ -182,6 +196,7 @@ export default function RecruitStatusView() {
             <RightBox>
               <Button1>프로필 자세히</Button1>
               <Button2>승낙하기</Button2>
+              {/* onClick={handleAccept(alarm.board_id)} */}
             </RightBox>
           </NewBox>
         ))}

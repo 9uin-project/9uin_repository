@@ -385,6 +385,7 @@ export default function PostDetail() {
       <Section3>
         <div className="section3_title">프로젝트 소개</div>
         <div className="section3_info">{text}</div>
+        <div className="section3_title">댓글</div>
         <ul className="section3_content">
           {commentList &&
             commentList.map((comment) => (
@@ -728,8 +729,7 @@ const Section3 = styled.div`
     padding: 0;
     overflow-y: scroll;
 
-    border-bottom: 2px solid #d9d9d9;
-    padding-bottom: 10px;
+    padding: 1rem;
   }
 
   .section3_content {
