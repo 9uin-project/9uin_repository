@@ -131,11 +131,12 @@ class CustomBoardRepositoryImplTest {
         String type = "";
         String user_id = "";
         List<String> tags = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
 
         //when
         long startmill = System.currentTimeMillis();
         Pageable pageable = PageRequest.of(0, 5);
-        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags);
+        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags, roles);
         List<Board> boardList = postPage.getContent();
         long endmill = System.currentTimeMillis();
         long querytime = endmill - startmill;
@@ -163,11 +164,12 @@ class CustomBoardRepositoryImplTest {
         String type = "";
         String user_id = "";
         List<String> tags = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
 
         //when
         long startmill = System.currentTimeMillis();
         Pageable pageable = PageRequest.of(4, 5);
-        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags);
+        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags, roles);
         List<Board> boardList = postPage.getContent();
         long endmill = System.currentTimeMillis();
         long querytime = endmill - startmill;
@@ -195,11 +197,12 @@ class CustomBoardRepositoryImplTest {
         String type = "";
         String user_id = "";
         List<String> tags = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
 
         //when
         long startmill = System.currentTimeMillis();
         Pageable pageable = PageRequest.of(2, 5);
-        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags);
+        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags, roles);
         List<Board> boardList = postPage.getContent();
         long endmill = System.currentTimeMillis();
         long querytime = endmill - startmill;
@@ -228,12 +231,12 @@ class CustomBoardRepositoryImplTest {
         String type = "";
         String user_id = "user1";
         List<String> tags = new ArrayList<>();
-
+        List<String> roles = new ArrayList<>();
 
         //when
         long startmill = System.currentTimeMillis();
         Pageable pageable = PageRequest.of(0, 5);
-        Page<Board> postPage =  boardRepository.findBoards(pageable, user_id, title, type, tags);
+        Page<Board> postPage =  boardRepository.findBoards(pageable, user_id, title, type, tags, roles);
         long endmill = System.currentTimeMillis();
         long querytime = endmill - startmill;
 
@@ -261,12 +264,13 @@ class CustomBoardRepositoryImplTest {
         String type = "";
         String user_id = "";
         List<String> tags = List.of("react");
+        List<String> roles = new ArrayList<>();
         List<Board> boardList = new ArrayList<>();
 
         //when
         long startmill = System.currentTimeMillis();
         Pageable pageable = PageRequest.of(0, 16);
-        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags);
+        Page<Board> postPage = boardRepository.findBoards(pageable, user_id, title, type, tags, roles);
         long endmill = System.currentTimeMillis();
         long querytime = endmill - startmill;
 
@@ -301,7 +305,7 @@ class CustomBoardRepositoryImplTest {
         String type = "";
         String user_id = "";
         List<String> tags = new ArrayList<>();
-
+        List<String> roles = new ArrayList<>();
 
         //when
         Pageable pageable = PageRequest.of(0, 5);

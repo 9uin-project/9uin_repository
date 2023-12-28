@@ -9,6 +9,8 @@ import com.inProject.in.domain.Notification.Dto.request.RequestNotificationDto;
 import com.inProject.in.domain.Notification.Dto.response.ResponseNotificationDto;
 import com.inProject.in.domain.Notification.entity.Notification;
 import com.inProject.in.domain.Notification.repository.NotificationRepository;
+import com.inProject.in.domain.RoleNeeded.entity.RoleNeeded;
+import com.inProject.in.domain.RoleNeeded.repository.RoleNeededRepository;
 import com.inProject.in.domain.User.entity.User;
 import com.inProject.in.domain.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final RoleNeededRepository roleNeededRepository;
     private final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
 
     @Transactional
@@ -49,6 +52,7 @@ public class NotificationService {
         String receiverName = requestNotificationDto.getReceiverName();
         String senderName = requestNotificationDto.getSenderName();
         Long board_id = requestNotificationDto.getBoard_id();
+        Long role_id = requestNotificationDto.getRole_id();
 
         User receiver = userRepository.getByUsername(receiverName)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.NOTIFICATION, HttpStatus.NOT_FOUND, receiverName + " 는 없는 유저입니다."));
@@ -57,9 +61,12 @@ public class NotificationService {
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.NOTIFICATION, HttpStatus.NOT_FOUND, senderName + " 는 없는 유저입니다."));
 
         Board board = boardRepository.findById(board_id)
-                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, board_id + " 게시글은 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.NOTIFICATION, HttpStatus.NOT_FOUND, board_id + " 게시글은 존재하지 않습니다."));
 
-        Notification savedNotification = notificationRepository.save(requestNotificationDto.toEntity(receiver, sender, board));
+        RoleNeeded roleNeeded = roleNeededRepository.findById(role_id)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.NOTIFICATION, HttpStatus.NOT_FOUND, role_id + " 직군은 존재하지 않습니다."));
+
+        Notification savedNotification = notificationRepository.save(requestNotificationDto.toEntity(receiver, sender, board, roleNeeded));
         log.info("알림 저장 완료 ==> " + savedNotification.getReceiver().getUsername() + " 에게 알림 동작");
         log.info("내용 ==> " + savedNotification.getMessage());
 

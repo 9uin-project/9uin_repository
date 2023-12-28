@@ -2,6 +2,7 @@ package com.inProject.in.domain.Notification.entity;
 
 import com.inProject.in.Global.BaseEntity;
 import com.inProject.in.domain.Board.entity.Board;
+import com.inProject.in.domain.RoleNeeded.entity.RoleNeeded;
 import com.inProject.in.domain.User.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,5 +33,8 @@ public class Notification extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    private RoleNeeded roleNeeded;
 
 }

@@ -96,6 +96,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             ApplicantRoleRelation applicantRoleRelation = ApplicantRoleRelation.builder()
                     .role_applicant(user)
                     .roleNeeded(roleNeeded)
+                    .board(board)
                     .build();
 
             RoleBoardRelation roleBoardRelation = roleBoardRelationRepository.findRelationById(board_id, role_id)
@@ -112,7 +113,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             board.getApplicantBoardRelationList().add(createApplicantBoardRelation);
 
-            log.info("Insert application ==> user - post relation_id : " + createApplicantBoardRelation.getId() +
+            log.info("Insert application ==> user - board relation_id : " + createApplicantBoardRelation.getId() +
                     " user - role relation_id : " + createApplicantRoleRelation.getId());
 
             ResponseApplicationDto responseApplicationDto = new ResponseApplicationDto("create", "success", true);
@@ -144,7 +145,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (applicantBoardRelationRepository.isExistApplicantBoard(user, board) == true) {
 
             ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(user, board).get();
-            ApplicantRoleRelation applicantRoleRelation = applicantRoleRelationRepository.findApplicantRole(user, roleNeeded).get();
+            ApplicantRoleRelation applicantRoleRelation = applicantRoleRelationRepository.findApplicantRole(user, board).get();
 
             applicantBoardRelationRepository.deleteById(applicantBoardRelation.getId());
             applicantRoleRelationRepository.deleteById(applicantRoleRelation.getId());

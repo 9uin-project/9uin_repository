@@ -181,7 +181,7 @@ class BoardServiceImplTest {
         assertEquals(board.getView_cnt(), responseBoardDto.getView_cnt());
         assertEquals(responseBoardDto.getView_cnt(), 0);
         assertEquals(responseBoardDto.getTags(), List.of("react"));
-        assertEquals(responseBoardDto.getRoles(), List.of(new ResponseRoleNeededDto(1L, "frontend", 0, 4)));
+        assertEquals(responseBoardDto.getRoles(), List.of(new ResponseRoleNeededDto(1L, "frontend", 0, 4, false)));
 
         System.out.println("--------------");
         System.out.println("view cnt : " + responseBoardDto.getView_cnt());
@@ -280,7 +280,7 @@ class BoardServiceImplTest {
         assertEquals(responseBoardDto.getText(), board.getText());
         assertEquals(responseBoardDto.getUsername(), board.getAuthor().getUsername());
         assertEquals(responseBoardDto.getTags(), List.of("react"));
-        assertEquals(responseBoardDto.getRoles(), List.of(new ResponseRoleNeededDto(1L, "frontend", 0, 4)));
+        assertEquals(responseBoardDto.getRoles(), List.of(new ResponseRoleNeededDto(1L, "frontend", 0, 4, false)));
     }
 
     @Test
@@ -370,6 +370,7 @@ class BoardServiceImplTest {
         String title = "";
         String type = "";
         List<String> tags = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
 
         RequestSearchBoardDto requestSearchBoardDto = RequestSearchBoardDto.builder()
                 .build();
@@ -399,7 +400,7 @@ class BoardServiceImplTest {
         List<Board> boardList = List.of(board, board2, board3);
         Page<Board> page = new PageImpl<>(boardList, pageable, boardList.size()); //이렇게 해도 가능!
 
-        given(boardRepository.findBoards(pageable, username, title, type, tags)).willReturn(page);
+        given(boardRepository.findBoards(pageable, username, title, type, tags, roles)).willReturn(page);
 
         //when
         ResponsePagingBoardDto responseBoardDtoList = boardService.getBoardList(pageable, requestSearchBoardDto);

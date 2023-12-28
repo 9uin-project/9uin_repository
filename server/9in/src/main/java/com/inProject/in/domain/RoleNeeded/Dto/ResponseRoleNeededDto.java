@@ -14,6 +14,8 @@ public class ResponseRoleNeededDto {
     private String name;
     private int pre_cnt;
     private int want_cnt;
+    @Builder.Default
+    private boolean isApply = false;
 
     public ResponseRoleNeededDto(RoleBoardRelation roleBoardRelation){
         this.role_id = roleBoardRelation.getRoleNeeded().getId();

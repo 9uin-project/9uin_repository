@@ -55,14 +55,6 @@ public class ApplicationController {
             ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
             String message = responseSseDto.getTitle()+" 의 "+ responseSseDto.getRole() +" 에 신청이 1건 있습니다.";
 
-            RequestNotificationDto requestNotificationDto = RequestNotificationDto.builder()
-                    .alarm_type("message")
-                    .board_id(board_id)
-                    .receiverName(requestApplicationDto.getAuthorName())
-                    .isChecked(false)
-                    .message(message)
-                    .build();
-
             sseService.subscribe(requestApplicationDto.getAuthorName(), message);
 
             return ResponseEntity.status(HttpStatus.OK).body(responseApplicationDto);

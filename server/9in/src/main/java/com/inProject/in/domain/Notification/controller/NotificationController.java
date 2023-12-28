@@ -76,4 +76,11 @@ public class NotificationController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseNotificationDto);
     }
+
+    @DeleteMapping()
+    public ResponseEntity<String> deleteNotification(@RequestParam Long notification_id){
+        notificationService.deleteNotification(notification_id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(notification_id + " 삭제 완료");
+    }
 }

@@ -21,4 +21,6 @@ public class RequestSearchBoardDto {
     private String type = "";
     @Builder.Default
     private List<String> tags = new ArrayList<>();  //url에 작성안하면 디폴트로 적용되는 값들 작성. 필터링할 때.
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
 }

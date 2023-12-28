@@ -5,14 +5,19 @@ import com.inProject.in.Global.exception.ConstantsClass;
 import com.inProject.in.Global.exception.CustomException;
 import com.inProject.in.config.security.CustomAccessDeniedHandler;
 import com.inProject.in.config.security.JwtTokenProvider;
+import com.inProject.in.domain.Board.entity.Board;
+import com.inProject.in.domain.Board.repository.BoardRepository;
 import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
 import com.inProject.in.domain.CommonLogic.Sse.repository.SseRepository;
 import com.inProject.in.domain.CommonLogic.Sse.service.SseService;
+import com.inProject.in.domain.Notification.Dto.request.RequestNotificationDto;
+import com.inProject.in.domain.Notification.Dto.response.ResponseNotificationDto;
 import com.inProject.in.domain.Notification.entity.Notification;
 import com.inProject.in.domain.Notification.repository.NotificationRepository;
 import com.inProject.in.domain.User.entity.User;
 import com.inProject.in.domain.User.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,30 +30,20 @@ import java.io.IOException;
 
 
 @Service
+@RequiredArgsConstructor
 public class SseServiceImpl implements SseService {
     // 기본 타임아웃 설정
     private static final Long DEFAULT_TIMEOUT = 120L * 1000 * 60;
-    private UserRepository userRepository;
-    private JwtTokenProvider jwtTokenProvider;
-    private  SseRepository sseRepository;
-    private ApplicationEventPublisher applicationEventPublisher;
-    private NotificationRepository notificationRepository;
-
+    private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final SseRepository sseRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final NotificationRepository notificationRepository;
     private final Logger log = LoggerFactory.getLogger(SseServiceImpl.class);
-    @Autowired
-    SseServiceImpl(SseRepository sseRepository,
-                   JwtTokenProvider jwtTokenProvider,
-                   UserRepository userRepository,
-                   ApplicationEventPublisher applicationEventPublisher,
-                   NotificationRepository notificationRepository){
-        this.userRepository = userRepository;
-        this.sseRepository = sseRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.applicationEventPublisher = applicationEventPublisher;
-        this.notificationRepository = notificationRepository;
-    }
+
     @Override
-    public SseEmitter subscribe(String username, String data) {
+    public SseEmitter subscribe(String username, Object data) {
 
         SseEmitter emitter = sseRepository.get(username);
         sendToClient(username,data);
@@ -56,7 +51,7 @@ public class SseServiceImpl implements SseService {
         return emitter;
     }
     @Override
-    public void sendToClient(String username, String data) {
+    public void sendToClient(String username, Object data) {
         SseEmitter emitter = sseRepository.get(username);
         if (emitter != null) {
             try {
@@ -64,9 +59,7 @@ public class SseServiceImpl implements SseService {
                         .id(username)
                         .name("notice")  //프론트에서 eventsource.addEventListener("sse" ...) 이 부분
                         .data(data));
-
                 log.info("data 전송 완료 : message ==> " + data);
-//                log.info("알림 저장 ==> 수신자 : " + savedNotification.getReceiver() + " 내용 : " + savedNotification.getMessage());
             } catch (IOException exception) {
                 sseRepository.deleteById(username);
                 emitter.completeWithError(exception);
