@@ -1,13 +1,3 @@
-# side_project
-
-up
-
-# 예상 도안
-<a href='https://ifh.cc/v-Q4ook5' target='_blank'><img src='https://ifh.cc/g/Q4ook5.png' border='0'></a>
-
-<a href='https://ifh.cc/v-RQkvYJ' target='_blank'><img src='https://ifh.cc/g/RQkvYJ.png' border='0'></a>
-
-
 # 9uin-project
 > 스터디/프로젝트 구인, 구직 웹 사이트입니다. 
 
@@ -19,6 +9,49 @@ up
 
 ![](../header.png)
 
+
+## 기술 스택
+
+### ✔️개발 IDE
+[![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703858160271?alt=media&token=302c2941-b02f-44a0-8786-5fe4eadfb9fe)](https://github.com/msdio/stackticon)
+<br>
+<img src="https://img.shields.io/badge/intellij-000000?style=for-the-badge&logo=intellijidea&logoColor=white">
+<img src="https://img.shields.io/badge/visualstudiocode-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white">
+<br>
+
+### ✔️VCS (버전 관리 시스템)
+[![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703858194503?alt=media&token=e8a7dfdc-7644-43bf-bc22-48aa67237fd2)](https://github.com/msdio/stackticon)
+<br>
+<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+<br>
+
+### ✔️Front-end 
+[![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703858680636?alt=media&token=99f87968-37cc-4695-9070-02df23d1766a)](https://github.com/msdio/stackticon)
+<br>
+<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black">
+<br>
+
+### ✔️Back-end 
+[![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703858648553?alt=media&token=1d040e2e-7379-42ce-9f34-276f28c5246a)](https://github.com/msdio/stackticon)
+<br>
+<img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/springsecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white">  <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"> <img src="https://img.shields.io/badge/jsonwebtoken-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white">
+<br>
+
+### ✔️DBMS 
+[![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703858717696?alt=media&token=b00df83b-cc57-43b1-9321-f0261089c001)](https://github.com/msdio/stackticon)
+<br>
+<img src="https://img.shields.io/badge/mariaDB-003545?style=for-the-badge&logo=mariaDB&logoColor=white"> <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
+<br>
+
+### ✔️Dev-ops
+[![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703858943234?alt=media&token=58b1bb31-0d99-4509-9c47-d2a1f38ba314)](https://github.com/msdio/stackticon)
+<br>
+<img src="https://img.shields.io/badge/googlecloud-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white"> <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"> <img src="https://img.shields.io/badge/kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white"> 
+
+### ✔️CI/CD
+[![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703859198818?alt=media&token=a6367650-50ac-4e1e-ba87-195c62df66ce)](https://github.com/msdio/stackticon)
+<br>
+<img src="https://img.shields.io/badge/githubaction-2088FF?style=for-the-badge&logo=githubactions&logoColor=white">
 ## 설치 방법
 
 OS X & 리눅스:
@@ -32,6 +65,12 @@ npm install my-crazy-module --save
 ```sh
 edit autoexec.bat
 ```
+
+## 예상 도안
+<a href='https://ifh.cc/v-Q4ook5' target='_blank'><img src='https://ifh.cc/g/Q4ook5.png' border='0'></a>
+
+<a href='https://ifh.cc/v-RQkvYJ' target='_blank'><img src='https://ifh.cc/g/RQkvYJ.png' border='0'></a>
+
 
 ## 사용 예제
 
@@ -47,21 +86,6 @@ _더 많은 예제와 사용법은 [Wiki][wiki]를 참고하세요._
 make install
 npm test
 ```
-
-## 업데이트 내역
-
-* 0.2.1
-    * 수정: 문서 업데이트 (모듈 코드 동일)
-* 0.2.0
-    * 수정: `setDefaultXYZ()` 메서드 제거
-    * 추가: `init()` 메서드 추가
-* 0.1.1
-    * 버그 수정: `baz()` 메서드 호출 시 부팅되지 않는 현상 (@컨트리뷰터 감사합니다!)
-* 0.1.0
-    * 첫 출시
-    * 수정: `foo()` 메서드 네이밍을 `bar()`로 수정
-* 0.0.1
-    * 작업 진행 중
 
 ## 정보
 
