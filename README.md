@@ -1,14 +1,20 @@
 # 9uin-project
+
+<p align="center">
+<img src="https://github.com/9uin-project/9uin_repository/assets/62745451/b9511cb3-01fc-4520-9ba7-b331d4342b5c" width="280" height="150"/>
+</p>
+
 > 스터디/프로젝트 구인, 구직 웹 사이트입니다. 
-
-[![NPM Version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
-[![Downloads Stats][npm-downloads]][npm-url]
-
-기본적인 커뮤니티 기능을 가지며, 구인, 구직하는 글을 작성할 수 있고, 지원하고자 하는 사람은 글에 지원하기 버튼을 통해 지원할 수 있습니다.
+> 게시글 작성 시 구체적인 구인 정보를 기입할 수 있고, 지원자들은 그 스터디/프로젝트에 지원할 수 있는 지 확인할 수 있습니다.
 
 ![](../header.png)
 
+## 개발 인원
+
+> 프론트엔드 : 2명 -> 1명 <br>
+> 백엔드 : 2명 <br>
+> 디자이너 : 1명 <br>
+<br>
 
 ## 기술 스택
 
@@ -52,6 +58,8 @@
 [![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703859198818?alt=media&token=a6367650-50ac-4e1e-ba87-195c62df66ce)](https://github.com/msdio/stackticon)
 <br>
 <img src="https://img.shields.io/badge/githubaction-2088FF?style=for-the-badge&logo=githubactions&logoColor=white">
+<br>
+
 ## 설치 방법
 
 OS X & 리눅스:
