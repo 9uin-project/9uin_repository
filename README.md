@@ -1,11 +1,11 @@
 # 9uin-project
+
+<p align="center">
+<img src="https://github.com/9uin-project/9uin_repository/assets/62745451/b9511cb3-01fc-4520-9ba7-b331d4342b5c" width="280" height="150"/>
+</p>
+
 > 스터디/프로젝트 구인, 구직 웹 사이트입니다. 
-
-[![NPM Version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
-[![Downloads Stats][npm-downloads]][npm-url]
-
-기본적인 커뮤니티 기능을 가지며, 구인, 구직하는 글을 작성할 수 있고, 지원하고자 하는 사람은 글에 지원하기 버튼을 통해 지원할 수 있습니다.
+> 기본적인 커뮤니티 기능을 가지며, 구인, 구직하는 글을 작성할 수 있고, 지원하고자 하는 사람은 글에 지원하기 버튼을 통해 지원할 수 있습니다.
 
 ![](../header.png)
 
