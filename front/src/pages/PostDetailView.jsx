@@ -142,6 +142,7 @@ export default function PostDetail() {
             receiverName: authorName,
             senderName: username,
             board_id,
+            role_id,
             message: `${title} 의 ${role_name} 에 신청이 1건 있습니다.`,
             alarm_type: 'message',
             checked: true,
@@ -239,7 +240,7 @@ export default function PostDetail() {
     <Container>
       <TitleBox>
         <h1>{title}</h1>
-        <h2>작성자: {username}</h2>
+        <h2>작성자: {authorName}</h2>
       </TitleBox>
       <Content>
         <div className="content_flex">

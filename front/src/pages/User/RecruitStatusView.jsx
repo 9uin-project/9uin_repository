@@ -75,14 +75,32 @@ export default function RecruitStatusView() {
     }
   };
 
-  const handleAccept = async () => {
+  const handleAccept = async (index) => {
     const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+    const applicationsInfo = {
+      board_id: alarmList[index].board_id,
+      role_id: alarmList[index].role_id,
+      authorName: alarmList[index].receiverName,
+    };
 
     try {
-      // const
-
-      const response = await axiosInstance.post('/application/accept');
+      const response = await axiosInstance.post(
+        '/applications/accept',
+        applicationsInfo
+      );
       console.log(response);
+
+      try {
+        const notification_id = alarmList[index].id;
+        const notifyAxios = createAxiosInstance(
+          localStorage.getItem('token'),
+          notification_id
+        );
+        const notifyRes = await notifyAxios.put('/notify');
+        console.log(notifyRes);
+      } catch (error) {
+        console.error('notify post error', error);
+      }
     } catch (error) {
       console.error('지원 수락실패', error);
       alert('수락하기를 실패하였습니다.');
@@ -181,7 +199,7 @@ export default function RecruitStatusView() {
       </MyBox>
       <MainTitle>신청 알림</MainTitle>
       {alarmList &&
-        alarmList.map((alarm) => (
+        alarmList.map((alarm, index) => (
           <NewBox key={alarm.id}>
             <LeftBox>
               <Icon />
@@ -195,8 +213,7 @@ export default function RecruitStatusView() {
             </LeftBox>
             <RightBox>
               <Button1>프로필 자세히</Button1>
-              <Button2>승낙하기</Button2>
-              {/* onClick={handleAccept(alarm.board_id)} */}
+              <Button2 onClick={() => handleAccept(index)}>승낙하기</Button2>
             </RightBox>
           </NewBox>
         ))}
@@ -326,6 +343,10 @@ const Button1 = styled.button`
   margin: 0.3rem;
   width: 5.5rem;
   border-radius: 0.5rem;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Button2 = styled.button`
@@ -338,6 +359,10 @@ const Button2 = styled.button`
   width: 5.5rem;
   border: none;
   border-radius: 0.5rem;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const ModalBtn = styled.button`
