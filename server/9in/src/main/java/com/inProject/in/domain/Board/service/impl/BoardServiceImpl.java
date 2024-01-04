@@ -127,6 +127,9 @@ public class BoardServiceImpl implements BoardService {
         String appliedRole = "";
         User user;
 
+        log.info("getBoard start");
+        log.info("getBoard ==> token : " + token);
+
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, id + "는 유효하지 않은 게시글 id입니다." ));
 

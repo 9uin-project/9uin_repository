@@ -106,6 +106,7 @@ public class JwtTokenProvider {
         log.info("JwtToken validateToken ==> 토큰 유효성 체크 시작");
         try{
             if(!Objects.isNull(redisTemplate.opsForValue().get(token))){   //블랙리스트에 등록된 token -> 로그아웃한 유저.
+                log.info("logout user ==> 예외 발생");
                 return false;
             }
 

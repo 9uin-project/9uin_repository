@@ -1,8 +1,6 @@
 //sseService
 package com.inProject.in.domain.CommonLogic.Sse.service;
 
-import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
-import com.inProject.in.domain.Notification.Dto.request.RequestNotificationDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 

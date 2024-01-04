@@ -1,4 +1,4 @@
-package com.inProject.in.domain.CommonLogic.Application.Dto;
+package com.inProject.in.domain.CommonLogic.Application.Dto.response;
 
 
 import lombok.*;

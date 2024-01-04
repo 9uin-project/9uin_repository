@@ -3,21 +3,15 @@ package com.inProject.in.domain.CommonLogic.Sse.controller;
 
 
 
-import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
-import com.inProject.in.domain.CommonLogic.Application.Dto.ResponseApplicationDto;
-import com.inProject.in.domain.CommonLogic.Application.Dto.ResponseSseDto;
+import com.inProject.in.domain.CommonLogic.Application.Dto.request.RequestApplicationDto;
+import com.inProject.in.domain.CommonLogic.Application.Dto.response.ResponseSseDto;
 import com.inProject.in.domain.CommonLogic.Application.service.ApplicationService;
 import com.inProject.in.domain.CommonLogic.Sse.service.SseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -51,7 +45,7 @@ public class SseController {
     public void subscribe(@RequestBody RequestApplicationDto requestApplicationDto) {
 //        Long board_id_long = Long.parseLong(id);
 
-        ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
+        ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto.getBoard_id(), requestApplicationDto.getRole_id());
 
         String message = responseSseDto.getTitle()+" 의 "+ responseSseDto.getRole() +" 에 신청이 1건 있습니다.";
         SseEmitter sseEmitter = sseService.subscribe(requestApplicationDto.getAuthorName(), message);

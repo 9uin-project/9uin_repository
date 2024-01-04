@@ -3,9 +3,8 @@ package com.inProject.in.domain.CommonLogic.service.Impl;
 import com.inProject.in.config.security.JwtTokenProvider;
 import com.inProject.in.domain.Board.entity.Board;
 import com.inProject.in.domain.Board.repository.BoardRepository;
-import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
-import com.inProject.in.domain.CommonLogic.Application.Dto.ResponseApplicationDto;
-import com.inProject.in.domain.CommonLogic.Application.service.ApplicationService;
+import com.inProject.in.domain.CommonLogic.Application.Dto.request.RequestApplicationDto;
+import com.inProject.in.domain.CommonLogic.Application.Dto.response.ResponseApplicationDto;
 import com.inProject.in.domain.CommonLogic.Application.service.Impl.ApplicationServiceImpl;
 import com.inProject.in.domain.MToNRelation.ApplicantBoardRelation.entity.ApplicantBoardRelation;
 import com.inProject.in.domain.MToNRelation.ApplicantBoardRelation.repository.ApplicantBoardRelationRepository;
@@ -146,7 +145,6 @@ class ApplicationServiceImplTest {
 
         RequestApplicationDto requestApplicationDto = RequestApplicationDto.builder()
                 .board_id(1L)
-                .user_id(2L)
                 .role_id(1L)
                 .authorName("user1")
                 .build();
