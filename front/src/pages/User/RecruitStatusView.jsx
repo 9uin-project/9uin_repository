@@ -100,6 +100,7 @@ export default function RecruitStatusView() {
         console.log(notifyRes);
       } catch (error) {
         console.error('notify post error', error);
+        alert('알람 확인하기를 실패하였습니다.');
       }
     } catch (error) {
       console.error('지원 수락실패', error);
