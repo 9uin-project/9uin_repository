@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { createAxiosInstance } from '../api/instance';
-import useSSE from '../api/sse';
 import { refreshTokenAndRetry } from '../api/user';
 
 export default function PostDetail() {
@@ -19,7 +18,6 @@ export default function PostDetail() {
   const [boardInfo, setBoardInfo] = useState(null);
 
   const [authorName, setAuthorName] = useState('');
-  const [applyStatus, setApplyStatus] = useState({});
 
   // 댓글
   const [comment, setComment] = useState('');
@@ -31,7 +29,7 @@ export default function PostDetail() {
       setAuthorName(response.data.username);
     } catch (error) {
       console.error('Error fetching boarInfo', error);
-      if (error.response.data.status === '401') {
+      if (error && error.response.data.status === '401') {
         try {
           const retryResponse = await refreshTokenAndRetry(
             'get',
@@ -42,6 +40,8 @@ export default function PostDetail() {
           );
           console.log('게시글 조회 성공 (재시도)');
           console.log(retryResponse);
+          setBoardInfo(retryResponse.data);
+          setAuthorName(retryResponse.data.username);
         } catch (refreshError) {
           console.error('새로운 액세스 토큰 얻기 실패', refreshError);
         }
@@ -101,11 +101,6 @@ export default function PostDetail() {
     }
   };
 
-  console.log(applyStatus);
-  console.log(applyStatus[2]);
-  // 만약에 applyStatus[role_id]가 '신청중'인데 한 번 더 클릭하게 되면 지원취소 API 호출
-  // applyStatus는 다른화면에 들어가면 초기화됨 -> 전역상태관리 필요성 (redux)
-
   const handleApply = async (role_id, pre_cnt, want_cnt, role_name) => {
     if (!token) {
       alert('로그인 후 이용하세요.');
@@ -131,11 +126,6 @@ export default function PostDetail() {
         console.log('게시글 지원 성공', response);
         alert('지원이 완료되었습니다.');
         console.log(response);
-
-        setApplyStatus({
-          ...applyStatus,
-          [role_id]: '신청중',
-        });
 
         try {
           const notifyData = {
@@ -180,11 +170,6 @@ export default function PostDetail() {
             console.log('게시글 지원 성공 (재시도)');
             alert('지원이 완료되었습니다.');
             console.log(retryResponse);
-
-            setApplyStatus({
-              ...applyStatus,
-              [role_id]: '신청중',
-            });
           } catch (refreshError) {
             console.error('새로운 액세스 토큰 얻기 실패', refreshError);
           }
@@ -330,11 +315,13 @@ export default function PostDetail() {
                     }
                     className={`${
                       role.pre_cnt >= role.want_cnt ? 'complete' : ''
-                    } ${applyStatus[role.role_id] ? 'applying' : ''}`}
+                    } ${role.apply ? 'applying' : ''}`}
                   >
                     {role.pre_cnt >= role.want_cnt
                       ? '모집완료'
-                      : applyStatus[role.role_id] || '신청하기'}
+                      : role.apply
+                      ? '신청중'
+                      : '신청하기'}
                   </button>
                 </div>
               </div>
