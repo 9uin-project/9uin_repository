@@ -19,7 +19,7 @@
 ## 기술 스택
 
 ### ✔️개발 IDE
-[![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703858160271?alt=media&token=302c2941-b02f-44a0-8786-5fe4eadfb9fe)](https://github.com/msdio/stackticon)
+[![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1704552754494?alt=media&token=3930bd25-e72c-4b40-88a3-c326063a6ce8)](https://github.com/msdio/stackticon)
 <br>
 <img src="https://img.shields.io/badge/intellij-000000?style=for-the-badge&logo=intellijidea&logoColor=white">
 <img src="https://img.shields.io/badge/visualstudiocode-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white">
