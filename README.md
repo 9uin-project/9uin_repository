@@ -35,6 +35,7 @@
 [![stackticon](https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1703858680636?alt=media&token=99f87968-37cc-4695-9070-02df23d1766a)](https://github.com/msdio/stackticon)
 <br>
 <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black">
+![Redux](https://img.shields.io/badge/Redux-764ABC?style=for-the-badge&logo=redux&logoColor=white)
 ![Styled Components](https://img.shields.io/badge/Styled_Components-%23DB7093.svg?style=for-the-badge&logo=styled-components&logoColor=white)
 <br>
 
