@@ -80,7 +80,7 @@ export default function RecruitStatusView() {
     const applicationsInfo = {
       board_id: alarmList[index].board_id,
       role_id: alarmList[index].role_id,
-      authorName: alarmList[index].receiverName,
+      senderName: alarmList[index].senderName,
     };
 
     try {
@@ -105,6 +105,39 @@ export default function RecruitStatusView() {
     } catch (error) {
       console.error('지원 수락실패', error);
       alert('수락하기를 실패하였습니다.');
+    }
+  };
+
+  const handleReject = async (index) => {
+    const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+    const applicationsInfo = {
+      board_id: alarmList[index].board_id,
+      role_id: alarmList[index].role_id,
+      senderName: alarmList[index].senderName,
+    };
+
+    try {
+      const response = await axiosInstance.post(
+        '/applications/reject',
+        applicationsInfo
+      );
+      console.log(response);
+
+      try {
+        const notification_id = alarmList[index].id;
+        const notifyAxios = createAxiosInstance(
+          localStorage.getItem('token'),
+          notification_id
+        );
+        const notifyRes = await notifyAxios.put('/notify');
+        console.log(notifyRes);
+      } catch (error) {
+        console.error('notify post error', error);
+        alert('알람 확인하기를 실패하였습니다.');
+      }
+    } catch (error) {
+      console.error('지원 거절실패', error);
+      alert('거절하기를 실패하였습니다.');
     }
   };
 
@@ -213,7 +246,7 @@ export default function RecruitStatusView() {
               </TextContainer>
             </LeftBox>
             <RightBox>
-              <Button1>프로필 자세히</Button1>
+              <Button1 onClick={() => handleReject(index)}>거절하기</Button1>
               <Button2 onClick={() => handleAccept(index)}>승낙하기</Button2>
             </RightBox>
           </NewBox>
