@@ -178,26 +178,32 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public ApplicantBoardRelation rejectApplication(RequestAcceptDto requestAcceptDto, HttpServletRequest request){
-        User user = getUserFromRequest(request);
+    public String rejectApplication(RequestAcceptDto requestAcceptDto, HttpServletRequest request){
         Long board_id = requestAcceptDto.getBoard_id();
         Long role_id = requestAcceptDto.getRole_id();
-//        Long user_id = requestApplicationDto.getUser_id();
+        String senderName = requestAcceptDto.getSenderName();
 
-//        User user = userRepository.findById(requestApplicationDto.getUser_id())
-//                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, user_id + "는 applyToBoard 에서 유효하지 않은 user id"));
+        User sender = userRepository.getByUsername(senderName)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, senderName + " 는 없는 유저입니다."));
 
         Board board = boardRepository.findById(board_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "는 applyToBoard 에서 유효하지 않은 board id"));
 
-        ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(user, board).get();
-        //applicantBoardRelation.setStatus(3);
+        ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(sender, board)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, senderName + " 는 이 게시글에 지원하지 않았습니다."));
+
+        ApplicantRoleRelation applicantRoleRelation = applicantRoleRelationRepository.findApplicantRole(sender, board)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, senderName + " 는 이 게시글에 지원하지 않았습니다."));
+
+        applicantBoardRelationRepository.delete(applicantBoardRelation);
+        applicantRoleRelationRepository.delete(applicantRoleRelation);
+
         //delete()
-        return applicantBoardRelation;
+        return "reject";
     }
     @Override
     @Transactional
-    public ApplicantBoardRelation acceptApplication(RequestAcceptDto requestAcceptDto, HttpServletRequest request){
+    public String acceptApplication(RequestAcceptDto requestAcceptDto, HttpServletRequest request){
 
         Long board_id = requestAcceptDto.getBoard_id();
         Long role_id = requestAcceptDto.getRole_id();
@@ -212,6 +218,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         RoleBoardRelation roleBoardRelation = roleBoardRelationRepository.findRelationById(board_id, role_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "에 " + role_id + "간의 관계는 없습니다."));
 
+        ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(sender, board)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, senderName + " 는 이 게시글에 지원하지 않았습니다."));
+
+        ApplicantRoleRelation applicantRoleRelation = applicantRoleRelationRepository.findApplicantRole(sender, board)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, senderName + " 는 이 게시글에 지원하지 않았습니다."));
+
         int pre_cnt = roleBoardRelation.getPre_cnt();
         int want_cnt = roleBoardRelation.getWant_cnt();
 
@@ -222,9 +234,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.CONFLICT, "최대 지원 수를 초과했습니다.");
         }
 
-        ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(sender, board).get();
         applicantBoardRelation.setStatus(0);
-        return applicantBoardRelation;
+        return "accept";
     }
     @Override
     @Transactional

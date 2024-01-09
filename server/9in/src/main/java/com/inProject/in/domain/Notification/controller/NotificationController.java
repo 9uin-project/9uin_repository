@@ -39,7 +39,7 @@ public class NotificationController {
                             @Schema(implementation = ResponseNotificationDto.class))
                     })
             })
-    public ResponseEntity<List<ResponseNotificationDto>> getNotifications(@RequestParam Long user_id){
+    public ResponseEntity<List<ResponseNotificationDto>> getNotifications(@RequestParam(name = "user_id") Long user_id){
         List<ResponseNotificationDto> responseNotificationDtoList = notificationService.getNotificationList(user_id);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseNotificationDtoList);
@@ -71,7 +71,7 @@ public class NotificationController {
                             @Schema(implementation = ResponseNotificationDto.class))
                     })
             })
-    public ResponseEntity<ResponseNotificationDto> updateNotification(@RequestParam Long notification_id){
+    public ResponseEntity<ResponseNotificationDto> updateNotification(@RequestParam(name = "notification_id") Long notification_id){
         ResponseNotificationDto responseNotificationDto = notificationService.updateToCheckNotification(notification_id);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseNotificationDto);

@@ -152,10 +152,14 @@ public class BoardServiceImpl implements BoardService {
             Boolean isApplication = applicantBoardRelationRepository.isExistApplicantBoard(user, board);
 
             if(isApplication){
-                ApplicantRoleRelation applicantRoleRelation = applicantRoleRelationRepository.findApplicantRole(user, board)
-                        .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, "applicant - role relation이 없습니다."));
+                ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(user, board).get();
 
-                appliedRole = applicantRoleRelation.getRoleNeeded().getName();
+                if(applicantBoardRelation.getStatus() != 0) {
+                    ApplicantRoleRelation applicantRoleRelation = applicantRoleRelationRepository.findApplicantRole(user, board)
+                            .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, "applicant - role relation이 없습니다."));
+
+                    appliedRole = applicantRoleRelation.getRoleNeeded().getName();
+                }
             }
         }
 

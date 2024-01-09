@@ -10,8 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface ApplicationService {
     ResponseApplicationDto createApplication(RequestApplicationDto requestApplicationDto, HttpServletRequest request);
     ResponseApplicationDto deleteApplication(RequestApplicationDto requestApplicationDto, HttpServletRequest request);
-    ApplicantBoardRelation rejectApplication(RequestAcceptDto requestAcceptDto, HttpServletRequest request);
-    ApplicantBoardRelation acceptApplication(RequestAcceptDto requestAcceptDto, HttpServletRequest request);
+    String rejectApplication(RequestAcceptDto requestAcceptDto, HttpServletRequest request);
+    String acceptApplication(RequestAcceptDto requestAcceptDto, HttpServletRequest request);
     ResponseSseDto ApplicationToSseResponse(Long board_id, Long role_id);
 }
 
