@@ -9,6 +9,7 @@ import com.inProject.in.domain.Board.Dto.response.ResponseBoardListDto;
 import com.inProject.in.domain.Board.Dto.response.ResponsePagingBoardDto;
 import com.inProject.in.domain.Board.entity.Board;
 import com.inProject.in.domain.Board.repository.ViewCountRepository;
+import com.inProject.in.domain.MToNRelation.ApplicantBoardRelation.repository.ApplicantBoardRelationRepository;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.entity.ClipBoardRelation;
 import com.inProject.in.domain.MToNRelation.RoleBoardRelation.entity.RoleBoardRelation;
 import com.inProject.in.domain.MToNRelation.RoleBoardRelation.repository.RoleBoardRelationRepository;
@@ -76,6 +77,8 @@ class BoardServiceImplTest {
     JwtTokenProvider jwtTokenProvider;
     @Mock
     ViewCountRepository viewCountRepository;
+    @Mock
+    ApplicantBoardRelationRepository applicantBoardRelationRepository;
 
     @InjectMocks                                       //생성한 mock 객체를 주입받음.
     BoardServiceImpl boardService;
@@ -209,6 +212,7 @@ class BoardServiceImplTest {
         given(userRepository.getByUsername(anyString())).willReturn(Optional.ofNullable(user2)); //끝
 
         given(viewCountRepository.getBoardList(anyString())).willReturn(new ArrayList<>());   //게시글 조회자는 직전까지 이 게시글을 조회한 적 없다.
+        given(applicantBoardRelationRepository.isExistApplicantBoard(user2, board)).willReturn(false);
         given(boardRepository.updateViewCnt(any(Long.class))).willReturn(board.getView_cnt() + 1);
 
         board.setView_cnt(board.getView_cnt() + 1);           //updateViewCnt가 무조건 잘 실행되었다고 생각하고 진행.
