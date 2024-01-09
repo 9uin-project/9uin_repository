@@ -1,5 +1,6 @@
 package com.inProject.in.domain.MToNRelation.ApplicantRoleRelation.repository.Impl;
 
+import com.inProject.in.domain.Board.entity.Board;
 import com.inProject.in.domain.MToNRelation.ApplicantRoleRelation.entity.ApplicantRoleRelation;
 import com.inProject.in.domain.MToNRelation.ApplicantRoleRelation.entity.QApplicantRoleRelation;
 import com.inProject.in.domain.MToNRelation.ApplicantRoleRelation.repository.CustomApplicantRoleRepository;
@@ -30,10 +31,10 @@ public class CustomApplicantRoleRepositoryImpl implements CustomApplicantRoleRep
     }
 
     @Override
-    public Optional<ApplicantRoleRelation> findApplicantRole(User user, RoleNeeded roleNeeded) {
+    public Optional<ApplicantRoleRelation> findApplicantRole(User user, Board board) { //여기 board 추가할 것.
         ApplicantRoleRelation query = jpaQueryFactory.selectFrom(qApplicantRoleRelation)
                 .where(qApplicantRoleRelation.role_applicant.eq(user),
-                        qApplicantRoleRelation.roleNeeded.eq(roleNeeded))
+                        qApplicantRoleRelation.board.eq(board))
                 .fetchFirst();
 
         return Optional.of(query);

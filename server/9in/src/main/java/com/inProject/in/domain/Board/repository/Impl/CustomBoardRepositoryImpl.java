@@ -3,8 +3,10 @@ package com.inProject.in.domain.Board.repository.Impl;
 import com.inProject.in.domain.Board.entity.Board;
 import com.inProject.in.domain.Board.entity.QBoard;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.entity.QClipBoardRelation;
+import com.inProject.in.domain.MToNRelation.RoleBoardRelation.entity.QRoleBoardRelation;
 import com.inProject.in.domain.MToNRelation.TagBoardRelation.entity.QTagBoardRelation;
 import com.inProject.in.domain.Board.repository.CustomBoardRepository;
+import com.inProject.in.domain.RoleNeeded.entity.QRoleNeeded;
 import com.inProject.in.domain.SkillTag.entity.QSkillTag;
 import com.inProject.in.domain.User.entity.QUser;
 import com.inProject.in.domain.User.entity.User;
@@ -28,7 +30,9 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
     private final JPAQueryFactory jpaQueryFactory;
     QBoard qBoard = QBoard.board;
     QSkillTag qSkillTag = QSkillTag.skillTag;
+    QRoleNeeded qRoleNeeded = QRoleNeeded.roleNeeded;
     QTagBoardRelation qTagBoardRelation = QTagBoardRelation.tagBoardRelation;
+    QRoleBoardRelation qRoleBoardRelation = QRoleBoardRelation.roleBoardRelation;
     QClipBoardRelation qClipBoardRelation = QClipBoardRelation.clipBoardRelation;
     QUser qUser = QUser.user;
 
@@ -56,7 +60,7 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
     }
 
     @Override
-    public Page<Board> findBoards(Pageable pageable, String username, String title, String type, List<String> tags) {
+    public Page<Board> findBoards(Pageable pageable, String username, String title, String type, List<String> tags, List<String> roles) {
 
         List<Board> content = jpaQueryFactory
                 .selectFrom(qBoard)
@@ -123,7 +127,7 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
     }
 
     private BooleanExpression TagsEq(List<String> tags) {
-        if (tags.isEmpty() == true) return null;
+        if (tags.isEmpty()) return null;
 
         BooleanExpression combinedExpression = Expressions.asBoolean(true).isTrue();
 
@@ -146,6 +150,25 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
             );
 
             combinedExpression = combinedExpression.and(tagQuery);
+        }
+
+        return combinedExpression;
+    }
+
+    private BooleanExpression RoleEq(List<String> roles){
+        if(roles.isEmpty()) return null;
+
+        BooleanExpression combinedExpression = Expressions.asBoolean(true).isTrue();
+
+        for (String role : roles) {
+            Predicate roleQuery = qBoard.id.in(
+                    jpaQueryFactory.select(qRoleBoardRelation.board.id)
+                            .from(qRoleBoardRelation)
+                            .join(qRoleBoardRelation.roleNeeded, qRoleNeeded)
+                            .where(qRoleNeeded.name.eq(role))
+            );
+
+            combinedExpression = combinedExpression.and(roleQuery);
         }
 
         return combinedExpression;

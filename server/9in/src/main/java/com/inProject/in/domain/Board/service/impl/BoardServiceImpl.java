@@ -13,6 +13,9 @@ import com.inProject.in.domain.Board.repository.ViewCountRepository;
 import com.inProject.in.domain.Comment.Dto.ResponseCommentDto;
 import com.inProject.in.domain.Comment.entity.Comment;
 import com.inProject.in.domain.MToNRelation.ApplicantBoardRelation.entity.ApplicantBoardRelation;
+import com.inProject.in.domain.MToNRelation.ApplicantBoardRelation.repository.ApplicantBoardRelationRepository;
+import com.inProject.in.domain.MToNRelation.ApplicantRoleRelation.entity.ApplicantRoleRelation;
+import com.inProject.in.domain.MToNRelation.ApplicantRoleRelation.repository.ApplicantRoleRelationRepository;
 import com.inProject.in.domain.MToNRelation.RoleBoardRelation.entity.RoleBoardRelation;
 import com.inProject.in.domain.MToNRelation.RoleBoardRelation.repository.RoleBoardRelationRepository;
 import com.inProject.in.domain.MToNRelation.TagBoardRelation.entity.TagBoardRelation;
@@ -52,6 +55,8 @@ public class BoardServiceImpl implements BoardService {
     private final RoleNeededRepository roleNeededRepository;
     private final TagBoardRelationRepository tagBoardRelationRepository;
     private final RoleBoardRelationRepository roleBoardRelationRepository;
+    private final ApplicantBoardRelationRepository applicantBoardRelationRepository;
+    private final ApplicantRoleRelationRepository applicantRoleRelationRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final ViewCountRepository viewCountRepository;
@@ -119,34 +124,49 @@ public class BoardServiceImpl implements BoardService {
     public ResponseBoardDto getBoard(Long id, HttpServletRequest request) {
 
         String token = jwtTokenProvider.resolveToken(request);
+        String appliedRole = "";
+        User user;
+
+        log.info("getBoard start");
+        log.info("getBoard ==> token : " + token);
+
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, id + "는 유효하지 않은 게시글 id입니다." ));
+
+        ResponseBoardDto responseBoardDto = new ResponseBoardDto(board);
 
         if(token != null){                                //사용자가 로그인한 회원인 경우만 조회수를 올리도록 했다.
-            User user = getUserFromRequest(request);
+            //조회수 증가 로직
+            user = getUserFromRequest(request);
             String str_board = String.valueOf(id);
             String str_user = String.valueOf(user.getId());
 
             if(!viewCountRepository.getBoardList(str_user).contains(str_board)){
                 viewCountRepository.setBoard(str_user, str_board);
-//            board.setView_cnt(board.getView_cnt() + 1);
-                int view = boardRepository.updateViewCnt(id);          //두 메서드 중 무엇을 쓸까. 한 번 테스트하기.
+                //board.setView_cnt(board.getView_cnt() + 1);
+                int view = boardRepository.updateViewCnt(id);
                 log.info("view cnt up : " + view );
             }
+
+            //지원을 했었는지 체크하는 로직
+            Boolean isApplication = applicantBoardRelationRepository.isExistApplicantBoard(user, board);
+
+            if(isApplication){
+                ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(user, board).get();
+
+                if(applicantBoardRelation.getStatus() != 0) {
+                    ApplicantRoleRelation applicantRoleRelation = applicantRoleRelationRepository.findApplicantRole(user, board)
+                            .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, "applicant - role relation이 없습니다."));
+
+                    appliedRole = applicantRoleRelation.getRoleNeeded().getName();
+                }
+            }
         }
-
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, id + "는 유효하지 않은 게시글 id입니다." ));
-
-        log.info("view cnt : " + board.getView_cnt());
-        ResponseBoardDto responseBoardDto = new ResponseBoardDto(board);
 
         for(TagBoardRelation tagBoardRelation : board.getTagBoardRelationList()){
             responseBoardDto.getTags().add(tagBoardRelation.getSkillTag().getName());
         }
 
-        for(RoleBoardRelation roleBoardRelation : board.getRoleBoardRelationList()){
-            ResponseRoleNeededDto responseRoleNeededDto = new ResponseRoleNeededDto(roleBoardRelation);
-            responseBoardDto.getRoles().add(responseRoleNeededDto);
-        }
 
         if(board.getCommentList() != null){
             for(Comment comment : board.getCommentList()){
@@ -164,6 +184,15 @@ public class BoardServiceImpl implements BoardService {
                 }
             }
         }
+
+        for(RoleBoardRelation roleBoardRelation : board.getRoleBoardRelationList()){
+            ResponseRoleNeededDto responseRoleNeededDto = new ResponseRoleNeededDto(roleBoardRelation);
+            if(appliedRole == responseRoleNeededDto.getName())
+                responseRoleNeededDto.setApply(true);
+
+            responseBoardDto.getRoles().add(responseRoleNeededDto);
+        }
+
         return responseBoardDto;
     }
 
@@ -324,8 +353,9 @@ public class BoardServiceImpl implements BoardService {
         String title = requestSearchBoardDto.getTitle();
         String type = requestSearchBoardDto.getType();
         List<String> tags = requestSearchBoardDto.getTags();
+        List<String> roles = requestSearchBoardDto.getRoles();
 
-        Page<Board> boardPage = boardRepository.findBoards(pageable, username, title, type, tags);
+        Page<Board> boardPage = boardRepository.findBoards(pageable, username, title, type, tags, roles);
         List<Board> boardList = boardPage.getContent();                                               //getContent를 통해 List로 변환시킨다.
         List<ResponseBoardListDto> responseBoardDtoList = new ArrayList<>();
         log.info("BoardService getBoardList ==> filtering by username : " + username + " title : " + title + " type : " + type );
