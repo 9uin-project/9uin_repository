@@ -7,7 +7,6 @@
 > 스터디/프로젝트 구인, 구직 웹 사이트입니다. 
 > 게시글 작성 시 구체적인 구인 정보를 기입할 수 있고, 지원자들은 그 스터디/프로젝트에 지원할 수 있는 지 확인할 수 있습니다.
 
-![](../header.png)
 
 ## 개발 인원
 
@@ -62,61 +61,58 @@
 <img src="https://img.shields.io/badge/githubaction-2088FF?style=for-the-badge&logo=githubactions&logoColor=white">
 <br>
 
-## 설치 방법
+## 개발 버전
 
-OS X & 리눅스:
-
-```sh
-npm install my-crazy-module --save
-```
-
-윈도우:
-
-```sh
-edit autoexec.bat
-```
-
-## 예상 도안
-<a href='https://ifh.cc/v-Q4ook5' target='_blank'><img src='https://ifh.cc/g/Q4ook5.png' border='0'></a>
-
-<a href='https://ifh.cc/v-RQkvYJ' target='_blank'><img src='https://ifh.cc/g/RQkvYJ.png' border='0'></a>
+- java jdk version : [17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+- spring boot version : [3.0.6](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes)
+- react node version : [18.16.0](https://nodejs.org/en/blog/release/v18.16.0)
 
 
-## 사용 예제
+## 화면 설계 및 디자인
+> 기획자(동시에 백엔드 개발) 담당인 신윤성이 화면 설계서를 작성했습니다.
+> 다음은 화면 설계서 중 일부입니다.
 
-스크린 샷과 코드 예제를 통해 사용 방법을 자세히 설명합니다.
+<img src="https://github.com/9uin-project/9uin_repository/assets/62745451/165255c8-a5b7-4aa9-9cec-42cb319b3e34" width="800" height="400"/>
+<br><br>
 
-_더 많은 예제와 사용법은 [Wiki][wiki]를 참고하세요._
+> 화면 설계서를 기반으로 디자이너가 figma를 통해 화면 디자인을 만들었습니다.
+> <br>
+> 디자인 figma 링크 : [9uin figma](https://www.figma.com/file/w4KRlUNTCgbkS7sFXQl3MA/%EA%B5%AC%EC%9D%B8-%EC%9B%B9-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8?type=design&node-id=0-1&mode=design)
+> <br>
+<img src="https://github.com/9uin-project/9uin_repository/assets/62745451/72fd2d35-bfb1-408a-954f-2b03bc2d49ed" width="800" height="400"/>
 
-## 개발 환경 설정
+## 주요 기능
 
-모든 개발 의존성 설치 방법과 자동 테스트 슈트 실행 방법을 운영체제 별로 작성합니다.
+### 기본적인 커뮤니티 기능
+- 커뮤니티에서 사용되는 기본적인 기능들의 구현
+- 회원가입, 로그인, 게시글 crud 등이 포함
 
-```sh
-make install
-npm test
-```
+### 게시글 지원자 현황
+- 게시글에 누가, 얼마나 지원했는지 표시
+- 이를 통해 오픈채팅에 들어가지 않고 인원을 파악할 수 있음
 
-## 정보
+### 게시글 필터링
 
-이름 – [@트위터 주소](https://twitter.com/dbader_org) – 이메일주소@example.com
+- 게시글을 검색할 때 기술스택을 통해 필터링 가능
+- 이외에도 제목이나 작성자 등 기본적인 필터링 구현
 
-XYZ 라이센스를 준수하며 ``LICENSE``에서 자세한 정보를 확인할 수 있습니다.
 
-[https://github.com/yourname/github-link](https://github.com/dbader/)
+## 아키텍처 
+> 기본적으로 spring boot 애플리케이션이 실행되는 인스턴스는 다음 구조를 가집니다.
+> <br>
 
-## 기여 방법
+![image](https://github.com/9uin-project/9uin_repository/assets/62745451/9af354ae-bc61-4a1b-8b50-d8da054e8840)
+<br>
 
-1. (<https://github.com/yourname/yourproject/fork>)을 포크합니다.
-2. (`git checkout -b feature/fooBar`) 명령어로 새 브랜치를 만드세요.
-3. (`git commit -am 'Add some fooBar'`) 명령어로 커밋하세요.
-4. (`git push origin feature/fooBar`) 명령어로 브랜치에 푸시하세요. 
-5. 풀리퀘스트를 보내주세요.
+> 이 인스턴스는 2개가 있으며, nginx를 이용해 로드밸런싱을 적용한 구조는 다음과 같습니다.
+> <br>
 
-<!-- Markdown link & img dfn's -->
-[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/datadog-metrics
-[npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
-[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
-[wiki]: https://github.com/yourname/yourproject/wiki
+![image](https://github.com/9uin-project/9uin_repository/assets/62745451/93b6563d-9830-4130-a740-fe12eab8e1a7)
+> GCP 인스턴스를 통해 배포했으며, docker를 활용했습니다. 로드밸런싱 방식은 round robin 방식으로 동작합니다.
+
+
+
+## 개발 기록
+
+- 회의 기록 : [노션 회의록](https://dent-car-caf.notion.site/e2f147e334f14f44ad9f6a1641f0a284?v=bfe677afb5f84e54ae0200159bdc2b2b&pvs=4)
+
