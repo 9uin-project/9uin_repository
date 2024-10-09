@@ -5,9 +5,11 @@ import com.inProject.in.Global.exception.CustomException;
 import com.inProject.in.domain.User.Dto.ResponseUserDto;
 import com.inProject.in.domain.User.Dto.UpdateUserDto;
 import com.inProject.in.domain.User.Dto.RequestUserDto;
+import com.inProject.in.domain.User.Mapper.UserMapper;
 import com.inProject.in.domain.User.entity.User;
 import com.inProject.in.domain.User.repository.UserRepository;
 import com.inProject.in.domain.User.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +22,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
-    UserServiceImpl(UserRepository userRepository){
-        this.userRepository = userRepository;
-    }
     @Override
     public ResponseUserDto getUser(String username) {
         User user = userRepository.getByUsername(username)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.USER, HttpStatus.NOT_FOUND, "getUser에서 유효하지 않은 아이디" + username));
 
-        ResponseUserDto responseUserDto = new ResponseUserDto(user);
+        ResponseUserDto responseUserDto = userMapper.toDto(user);
 
         return responseUserDto;
     }
@@ -42,10 +42,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public ResponseUserDto createUser(RequestUserDto userdto) {
 
-        User user = userdto.toEntity();
-
+        User user = userMapper.toEntity(userdto);
         User savedUser = userRepository.save(user);
-        ResponseUserDto responseUserDto = new ResponseUserDto(user);
+
+        ResponseUserDto responseUserDto = userMapper.toDto(savedUser);
 
         return responseUserDto;
     }
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.updateUser(updateUserdto);
         User updatedUser = userRepository.save(user);
 
-        ResponseUserDto responseUserDto = new ResponseUserDto(updatedUser);
+        ResponseUserDto responseUserDto = userMapper.toDto(updatedUser);
         return responseUserDto;
     }
 
